@@ -69,6 +69,7 @@ function DetailBook() {
     : book.description.slice(0, maxDescriptionLength) +
       (isLongDescription ? "..." : "");
 
+    // Hàm handle ra trang đọc ebook qua thư viện PDFViewers.
   const handleReadEbook = async (ebook) => {
     if (ebook) {
       setShowPDF(true);
