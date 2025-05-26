@@ -6,6 +6,8 @@ import { useState } from "react";
 import { User, BookOpen, Ticket } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Thong ke - Admin
+
 export default function Dashboard() {
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
