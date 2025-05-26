@@ -5,6 +5,7 @@ import {
   logOutService,
 } from "../services/auth.service.js";
 
+// api gừi mã OPT
 export const verifySignUp = async (req, res, next) => {
   try {
     const { otp } = req.body;
@@ -23,6 +24,7 @@ export const verifySignUp = async (req, res, next) => {
   }
 };
 
+// api đăng kí
 export const signUp = async (req, res, next) => {
   try {
     const { username, email, password, confirmPassword } = req.body;
@@ -34,7 +36,7 @@ export const signUp = async (req, res, next) => {
     next(error);
   }
 };
-
+// api đăng nhập
 export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -46,7 +48,7 @@ export const signIn = async (req, res, next) => {
     next(error);
   }
 };
-
+// api đăng xuất
 export const logOut = async (req, res, next) => {
   try {
     await logOutService(res);
