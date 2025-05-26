@@ -2,6 +2,7 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+// Tạo url api
 const API = axios.create({
   baseURL: `${apiUrl}/api/v1/user`,
 });
@@ -14,6 +15,7 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+// api user 
 const apiUser = {
   getUser: async (userId) => await API.get(`/${userId}`),
   updateUser: async (userId, data) => await API.patch(`/${userId}`, data),

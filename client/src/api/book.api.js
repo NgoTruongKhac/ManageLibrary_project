@@ -2,11 +2,13 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+// Tạo url api
 const API = axios.create({
   baseURL: `${apiUrl}/api/v1/book`,
   withCredentials: true,
 });
 
+// api book 
 const apiBook = {
   getAllBooks: async (page) => await API.get(`/?page=${page}`),
   getBookByCategories: async (category, page) =>
