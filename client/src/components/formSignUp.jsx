@@ -1,78 +1,92 @@
+// Import useState từ React để quản lý trạng thái
 import { useState } from "react";
-import authApi from "../api/auth.api";
+import authApi from "../api/auth.api"; // Import API để xử lý đăng ký
 
 function FormSignUp({ setOpen }) {
+  // Khai báo state để lưu lỗi từ server khi đăng ký
   const [errors, setErrors] = useState({
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassWord] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  // Khai báo state để lưu dữ liệu form
+  const [email, setEmail] = useState(""); // Email nhập từ form
+  const [password, setPassWord] = useState(""); // Mật khẩu nhập từ form
+  const [confirmPassword, setConfirmPassword] = useState(""); // Xác nhận mật khẩu
+  const [loading, setLoading] = useState(false); // Trạng thái loading khi gửi request
 
+  // Hàm xử lý đăng ký
   const handleSignUp = async () => {
-    setLoading(true);
+    setLoading(true); // Bắt đầu loading khi gửi request
     try {
+      // Tạo username từ email bằng cách lấy phần trước "@"
       const username = email.split("@")[0];
+
+      // Gửi dữ liệu đăng ký lên API
       const response = await authApi.signUp({
         username,
         email,
         password,
         confirmPassword,
       });
-      console.log(response.data);
 
-      setLoading(false);
+      console.log(response.data); // Kiểm tra response từ server
 
+      setLoading(false); // Dừng loading
+
+      // Nếu đăng ký thành công, mở modal OTP để xác minh tài khoản
       if (response.data.message) {
-        handleCloseSignUp();
-        setOpen(true);
-        handleOpenOtp();
+        handleCloseSignUp(); // Đóng modal đăng ký
+        setOpen(true); // Kích hoạt trạng thái mở modal OTP
+        handleOpenOtp(); // Mở modal OTP
       }
     } catch (error) {
-      setLoading(false);
+      setLoading(false); // Dừng loading nếu gặp lỗi
+
+      // Kiểm tra nếu có lỗi từ server
       if (error.response && error.response.data && error.response.data.errors) {
         const errorList = error.response.data.errors;
 
-        console.log(errorList);
+        console.log(errorList); // In danh sách lỗi để debug
 
+        // Cập nhật lỗi vào state để hiển thị trong form
         const newErrors = { email: "", password: "", confirmPassword: "" };
 
         errorList.forEach((err) => {
-          if (err.value === email) newErrors.email = err.message;
-          if (err.value === password) newErrors.password = err.message;
+          if (err.value === email) newErrors.email = err.message; // Lỗi email
+          if (err.value === password) newErrors.password = err.message; // Lỗi mật khẩu
           if (err.value === confirmPassword)
-            newErrors.confirmPassword = err.message;
+            newErrors.confirmPassword = err.message; // Lỗi xác nhận mật khẩu
         });
 
-        setErrors(newErrors);
+        setErrors(newErrors); // Cập nhật lỗi
       }
     }
   };
 
+  // Hàm mở modal đăng nhập
   const handleOpenSignIn = () => {
-    handleCloseSignUp();
-    // Mở modal đăng ký
+    handleCloseSignUp(); // Đóng modal đăng ký
     const modalSignIn = document.getElementById("form_sign_in");
     if (modalSignIn) {
-      modalSignIn.showModal(); // Hoặc classList.add("modal-open")
+      modalSignIn.showModal(); // Hiển thị modal đăng nhập
     }
   };
 
+  // Hàm đóng modal đăng ký
   const handleCloseSignUp = () => {
     const modalSignUp = document.getElementById("form_sign_up");
     if (modalSignUp) {
-      modalSignUp.close(); // Hoặc classList.remove("modal-open") nếu bạn dùng toggle class
+      modalSignUp.close(); // Đóng modal
     }
   };
 
+  // Hàm mở modal OTP để xác thực tài khoản
   const handleOpenOtp = () => {
     const modalOtp = document.getElementById("form_otp");
     if (modalOtp) {
-      modalOtp.showModal();
+      modalOtp.showModal(); // Hiển thị modal OTP
     }
   };
 
@@ -80,33 +94,17 @@ function FormSignUp({ setOpen }) {
     <div className="modal-box w-100">
       <h3 className="font-bold text-lg mb-4">Đăng ký</h3>
 
-      {/* Email Input */}
+      {/* Input Email */}
       <div className="form-control w-full mb-2">
         <label className="label">
           <span className="label-text">Email</span>
         </label>
         <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 gap-3">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-            </g>
-          </svg>
           <input
             type="email"
             className="w-full outline-none"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)} // Cập nhật state email
           />
         </div>
         {errors.email && (
@@ -114,65 +112,35 @@ function FormSignUp({ setOpen }) {
         )}
       </div>
 
-      {/* Password Input */}
+      {/* Input Mật khẩu */}
       <div className="form-control w-full mb-2">
         <label className="label">
           <span className="label-text">Mật khẩu</span>
         </label>
         <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 gap-3">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-              <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-            </g>
-          </svg>
           <input
             type="password"
             className="w-full outline-none"
             value={password}
-            onChange={(e) => setPassWord(e.target.value)}
+            onChange={(e) => setPassWord(e.target.value)} // Cập nhật state mật khẩu
           />
         </div>
         {errors.password && (
           <p className="text-red-500 text-sm mt-1">{errors.password}</p>
         )}
       </div>
+
+      {/* Input Xác nhận mật khẩu */}
       <div className="form-control w-full mb-2">
         <label className="label">
           <span className="label-text">Xác nhận mật khẩu</span>
         </label>
         <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 gap-3">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-              <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-            </g>
-          </svg>
           <input
             type="password"
             className="w-full outline-none"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => setConfirmPassword(e.target.value)} // Cập nhật state xác nhận mật khẩu
           />
         </div>
         {errors.confirmPassword && (
@@ -180,7 +148,7 @@ function FormSignUp({ setOpen }) {
         )}
       </div>
 
-      {/* Sign In Button */}
+      {/* Nút đăng ký */}
       <div className="form-control mt-4">
         <button className="btn btn-primary w-full" onClick={handleSignUp}>
           {loading ? (
@@ -191,44 +159,7 @@ function FormSignUp({ setOpen }) {
         </button>
       </div>
 
-      <div className="divider mt-6">hoặc</div>
-
-      {/* Google Button */}
-      <div className="flex flex-col gap-3">
-        <button className="btn bg-white text-black border-[#e5e5e5] w-full">
-          <svg
-            aria-label="Google logo"
-            width="16"
-            height="16"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-            className="mr-2"
-          >
-            <g>
-              <path d="m0 0H512V512H0" fill="#fff"></path>
-              <path
-                fill="#34a853"
-                d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
-              ></path>
-              <path
-                fill="#4285f4"
-                d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
-              ></path>
-              <path
-                fill="#fbbc02"
-                d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
-              ></path>
-              <path
-                fill="#ea4335"
-                d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
-              ></path>
-            </g>
-          </svg>
-          Đăng nhập với Google
-        </button>
-      </div>
-
-      {/* Sign Up */}
+      {/* Chuyển sang đăng nhập */}
       <div className="text-center mt-6">
         <p>
           Bạn đã có tài khoản?{" "}
@@ -238,7 +169,7 @@ function FormSignUp({ setOpen }) {
         </p>
       </div>
 
-      {/* Close Button */}
+      {/* Nút đóng modal */}
       <div className="modal-action mt-6">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
